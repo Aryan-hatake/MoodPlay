@@ -2,6 +2,10 @@
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const blackListModel = require("../model/blackListToken.model")
+const redis = require("../config/cache")
+
+
+
 
 const registerUser = async(req,res)=>{
     const {email,username,password} = req.body
@@ -80,13 +84,7 @@ const loginUser = async(req,res)=>{
 const getUser = async(req,res)=>{
     const user = req.user;
     
-    const token = req.cookies.token
-    const blackListed = await blackListModel.findOne({token})
-    if(blackListed){
-        return res.status(401).json({
-            message:"invalid token"
-        })
-    }
+ 
     const userRecord = await userModel.findById(user);
     
     res.status(200).json({
@@ -98,10 +96,10 @@ const getUser = async(req,res)=>{
 const logout = async(req,res)=>{
     const token = req.cookies.token
     
-    const blackListed = await blackListModel.create({
-        token
-    })
+    const stored =  await redis.set(token,Date.now().toString())
     
+    console.log(stored)
+
     res.clearCookie("token")
 
     res.status(200).json({

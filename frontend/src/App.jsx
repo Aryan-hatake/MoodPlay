@@ -1,10 +1,8 @@
-import React from 'react'
-import FaceDetection from './features/FaceExpression/pages/FaceDetection'
+import { RouterProvider } from "react-router-dom"
+import { router } from "./app.routes"
 const App = () => {
   return (
-    <div>
-      <FaceDetection/>
-    </div>
+   <RouterProvider router={router} />
   )
 }
 
