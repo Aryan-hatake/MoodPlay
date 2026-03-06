@@ -12,14 +12,9 @@ const getToken = async(req,res,next)=>{
         })
     }
 
-     const isTokenBlackListed = await redis.get(token)
+    
      
-    if (isTokenBlackListed) {
-        return res.status(401).json({
-            message: "Invalid token"
-        })
-    }
-
+   
     let isValid;
     try{
        isValid = jwt.verify(token,process.env.JWT_SECRET)

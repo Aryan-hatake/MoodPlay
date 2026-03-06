@@ -1,18 +1,26 @@
-import {createBrowserRouter} from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
+import Login from './features/auth/UI/pages/Login'
+import Register from './features/auth/UI/pages/Register'
+import Button from './features/auth/UI/components/Button'
+
 
 
 export const router = createBrowserRouter([
     {
-        path:'/register',
-        element:<h1>Register</h1>
+        path: '/register',
+        element: <Register />
     },
     {
-        path:'/login',
-        element:<h1>login</h1>
+        path: '/login',
+        element: <Login />
     },
     {
-        path:'/',
-        element:<h1>Home</h1>
+        path: '/',
+        element: <>
+
+            <h1>Home</h1>
+            <Button value={"logout"}/>
+        </>
     },
 ])
 
