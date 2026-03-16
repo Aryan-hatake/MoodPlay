@@ -20,12 +20,11 @@ const Login = () => {
   const handleSubmit = async(e)=>{
      e.preventDefault()
      await handleLogin(username,password)
-     if(user){
+  }
+   if(user){
        navigate("/")
 
      }
-   
-  }
 
     console.log(user)
 
@@ -34,7 +33,7 @@ const Login = () => {
         <div className="form-cont">
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
-               <FormGroup onChange={(e)=>{setUsername(e.target.value)}} value = {username}  label={"username / email"} />
+               <FormGroup onChange={(e)=>{setUsername(e.target.value)}} value = {username}  label={"username"} />
                <FormGroup onChange={(e)=>{setPassword(e.target.value)}} value={password} label={"password"} />
                <Button value={"Submit"}/>
             </form>

@@ -1,5 +1,5 @@
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
-
+import { useSong } from "../../songs/hooks/useSong";
 // @functionality - styles Obj
 export const styles = {
     container: {
@@ -113,11 +113,11 @@ export const detect = (landmarker, videoRef, setMood) => {
         // Simple logic mapping
         console.log(browDown)
  
-        if (smile > 0.8) setMood("😊 Happy");
-        else if (browDown > 1 && (eyeSquint > 0.6 || mouthPress > 0.6)) setMood("😠 Angry");   
-        else if (frown > 0.02 && browDown > 0.2) setMood("😢 Sad");
-        else if (jawOpen > 0.06) setMood("😮 Surprised");
-        else setMood("😐 Neutral");
+        if (smile > 0.8) setMood("Happy");
+        else if (browDown > 1 && (eyeSquint > 0.6 || mouthPress > 0.6)) setMood("Angry");   
+        else if (frown > 0.02 && browDown > 0.2) setMood("Sad");
+        else if (jawOpen > 0.06) setMood("Surprised");
+        else setMood("Neutral");
     }
 
     requestAnimationFrame(() => {
@@ -125,3 +125,27 @@ export const detect = (landmarker, videoRef, setMood) => {
     });
 
 };
+
+
+// @functionality -  stop user cam
+export const handleStopCamera = async(streamRef,setIsDetecting,detectedMood,handleGetSong,handleGetPlaylist) => {
+    
+
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+    }
+    await handleGetSong(detectedMood)
+    await handleGetPlaylist(detectedMood)
+    setIsDetecting(false);
+
+  };
+
+
+  // @functionality -  handle user cam
+export const handleStartCamera = async (setIsDetecting, setDetectedMood, landmarker, videoRef, streamRef) => {
+    setIsDetecting(true);
+    
+    await startCamera(landmarker, videoRef, streamRef, (mood) => {
+      setDetectedMood(mood);
+    });
+  };

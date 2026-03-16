@@ -1,116 +1,111 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
-import { loadModel,startCamera,styles } from "../utils/utils";
+import { loadModel,handleStopCamera , handleStartCamera } from "../utils/utils";
+import '../styles/FaceDetection.css';
+import useFace from "../hooks/useFace";
+import { useSong } from "../../songs/hooks/useSong";
+import MoodMusicPlayer from "../../songs/UI/components/MoodMusicPlayer";
 
 export default function MoodDetector() {
   const videoRef = useRef(null);
   const [landmarker, setLandmarker] = useState(null);
-  const [mood, setMood] = useState("Detecting...");
-  const streamRef = useRef(null)
-  // Load FaceLandmarker once
-  //  const loadModel = async () => {
-  //     const vision = await FilesetResolver.forVisionTasks(
-  //       "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-  //     );
+  const streamRef = useRef(null);
+  
 
-  //     const detector = await FaceLandmarker.createFromOptions(vision, {
-  //       baseOptions: {
-  //         modelAssetPath:
-  //           "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
-  //         delegate: "GPU",
-  //       },
-  //       runningMode: "VIDEO",
-  //       outputFaceBlendshapes: true,
-  //     });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(35);
 
-  //     setLandmarker(detector);
-  //   };
-    
+   const  {isDetecting, setIsDetecting,detectedMood, setDetectedMood} = useFace()
+
+   const {handleGetSong,handleGetPlaylist,currentSong,playlist,loading} = useSong()
+   
+   const moodEmojis = {
+    "Happy": "😊",
+    "Angry": "😠",
+    "Sad": "😢",
+    "Surprised": "😲",
+    "Neutral": "😐",
+  };
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
+
+
+
   useEffect(() => {
-    loadModel(landmarker,setLandmarker);
+    loadModel(landmarker, setLandmarker);
     return () => {
-            if (landmarker) {
-                landmarker.close();
-            }
-
-            if (videoRef.current?.srcObject) {
-                videoRef.current.srcObject
-                    .getTracks()
-                    .forEach((track) => track.stop());
-            }
-        };
+      if (landmarker) {
+        landmarker.close();
+      }
+      if (videoRef.current?.srcObject) {
+        videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+      }
+    };
   }, []);
 
-  // const startCamera = async () => {
-  //   if (!landmarker) return;
+  
+  
 
-  //   const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-  //   videoRef.current.srcObject = stream;
-  //   videoRef.current.onloadeddata = detect;
-  // };
 
-  // const detect = () => {
-  //   if (!videoRef.current || !landmarker) return;
+  
 
-  //   const results = landmarker.detectForVideo(
-  //     videoRef.current,
-  //     performance.now()
-  //   );
-    
-    
 
-  //   if (results.faceBlendshapes.length > 0) {
-  //     const blends = results.faceBlendshapes[0].categories;
-  //     console.log(blends)
-  //     const getScore = (name) =>
-  //       blends.find((b) => b.categoryName === name)?.score || 0;
 
-  //     // Important blendshapes
-  //     const smile = getScore("mouthSmileLeft") + getScore("mouthSmileRight");
-  //     const frown = getScore("mouthFrownLeft") + getScore("mouthFrownRight");
-  //     const jawOpen = getScore("jawOpen");
-  //     const browDown = getScore("browDownLeft") + getScore("browDownRight");
-      
-  //     console.log(jawOpen)
-
-  //     // Simple logic mapping
-  //     console.log(jawOpen)
-  //     if (smile > 0.8) setMood("😊 Happy");
-  //     else if (frown > 0.6 || browDown > 0.8) setMood("😢 Sad");
-  //     else if (jawOpen > 0.06)  setMood("😮 Surprised");
-  //     else setMood("😐 Neutral");
-  //   }
-
-  //   requestAnimationFrame(detect);
-  // };
 
   return (
-    <div style={styles.container}>
-  <div style={styles.card}>
-    <h2 style={styles.heading}>Mood Detection</h2>
+    <div className="luxury-container">
+      {/* Floating AI Indicator */}
+      <div className="floating-ai-indicator">
+        <div className="ai-pulse"></div>
+        <span className="ai-text">🤖 AI Mood Analysis</span>
+      </div>
 
-    <button
-      onClick={() => startCamera(landmarker, videoRef, streamRef, setMood)}
-      disabled={!landmarker}
-      style={{
-        ...styles.button,
-        opacity: landmarker ? 1 : 0.6,
-        cursor: landmarker ? "pointer" : "not-allowed",
-      }}
-    >
-      {landmarker ? "Start Camera" : "Loading..."}
-    </button>
+      {/* Top Section */}
+      <div className="top-section">
+        <div className="greeting-section">
+          <h1 className="greeting-text">{getGreeting()}</h1>
+          <p className="mood-subtitle">
+            You seem <span className="mood-emphasis">{detectedMood}</span> today
+          </p>
+        </div>
 
-    <video
-      ref={videoRef}
-      autoPlay
-      playsInline
-      width="400"
-      style={styles.video}
-    />
+        {/* Mood Detection Card */}
+        <div className="mood-detection-card">
+          {isDetecting ? (
+            <div className="camera-wrapper">
+              <video ref={videoRef} autoPlay playsInline className="detection-video" />
+              <div className="camera-overlay">
+                <div className="detection-circle"></div>
+                <p className="detection-hint">Position your face in the circle</p>
+              </div>
+            </div>
+          ) : (
+            <div className="camera-placeholder">
+              <div className="placeholder-icon">📷</div>
+              <p>Enable camera for mood detection</p>
+            </div>
+          )}
 
-    <h3 style={styles.mood}>{mood}</h3>
-  </div>
-</div>
+          <button
+            className={`detect-btn ${isDetecting ? "active" : ""}`}
+            onClick={()=>{isDetecting ? handleStopCamera(streamRef,setIsDetecting,detectedMood,handleGetSong,handleGetPlaylist) : handleStartCamera(setIsDetecting,setDetectedMood,landmarker,videoRef,streamRef)}}
+            disabled={!landmarker}
+          >
+            {!landmarker ? "⏳ Loading..." : isDetecting ? "⏹️ Stop Detection" : "🎬 Start Detection"}
+          </button>
+
+          <div className="detected-mood-badge">
+            <span className="mood-emoji">{moodEmojis[detectedMood]}</span>
+            <span className="mood-name">{detectedMood}</span>
+          </div>
+        </div>
+      </div>
+    
+    <MoodMusicPlayer/>
+    </div>
   );
 }

@@ -2,6 +2,8 @@ import { createBrowserRouter } from 'react-router-dom'
 import Login from './features/auth/UI/pages/Login'
 import Register from './features/auth/UI/pages/Register'
 import Button from './features/auth/UI/components/Button'
+import ProtectedRoute from './features/auth/components/ProtectedRoute'
+import FaceDetection from './features/FaceExpression/pages/FaceDetection'
 
 
 
@@ -14,13 +16,12 @@ export const router = createBrowserRouter([
         path: '/login',
         element: <Login />
     },
+
     {
         path: '/',
-        element: <>
-
-            <h1>Home</h1>
-            <Button value={"logout"}/>
-        </>
+        element: <ProtectedRoute>
+            <FaceDetection />
+        </ProtectedRoute>
     },
 ])
 

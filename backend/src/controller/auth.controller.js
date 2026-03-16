@@ -78,18 +78,19 @@ const loginUser = async(req,res)=>{
     res.cookie("token",token)
 
     res.status(201).json({
-        message:"User logged in successfully"
+        message:"User logged in successfully",
+        user
     })
 }
 const getUser = async(req,res)=>{
     const user = req.user;
     
  
-    const userRecord = await userModel.findById(user);
+    const userRecord = await userModel.findById(user).select("-password");
     
     res.status(200).json({
         message:"user data fetched successfully",
-        userRecord
+        user:userRecord
     })
 
 }
