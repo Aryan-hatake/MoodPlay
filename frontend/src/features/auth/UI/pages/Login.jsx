@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import FormGroup from '../components/FormGroup'
 import Button from '../components/Button'
 import { useAuth } from '../../hooks/useAuth'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate, Link} from 'react-router-dom'
 
 const Login = () => {
 
@@ -37,6 +37,7 @@ const Login = () => {
                <FormGroup onChange={(e)=>{setPassword(e.target.value)}} value={password} label={"password"} />
                <Button value={"Submit"}/>
             </form>
+            <p>Don't have an account? <Link to="/register">Register here</Link></p>
         </div>
     </main>
   )

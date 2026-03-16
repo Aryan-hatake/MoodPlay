@@ -8,7 +8,7 @@ const cors = require("cors")
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin:"https://moodplay-service.onrender.com/",
     credentials:true
 }))
 app.use(express.json())
