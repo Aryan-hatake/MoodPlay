@@ -11,6 +11,7 @@ const ProtectedRoute = ({ children }) => {
   
     useEffect(()=>{
        (async function(){
+          console.log("working?")
            await handleGetUser()
        })()
     },[])

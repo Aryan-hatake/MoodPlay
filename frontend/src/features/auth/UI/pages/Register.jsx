@@ -13,16 +13,17 @@ const Register = () => {
     const [password, setPassword] = useState('')
 
     const {handleRegister,user,loading} = useAuth()
+    
     const navigate = useNavigate()
 
      const handleSubmit = async(e)=>{
      e.preventDefault()
-     await handleRegister(username,password,email)
-     if(user){
-       navigate("/")
-
-     }
-   }
+     await handleRegister(username,email,password)
+    }
+   
+    if(user){
+      navigate("/")
+    }
   return (
      <main>
         <div className="form-cont">
