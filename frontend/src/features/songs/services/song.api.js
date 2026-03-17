@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3000/api/song';
+const API_BASE_URL = 'https://moodplay-service.onrender.com/api/song';
 
 
 export const fetchSongByMood = async (mood) => {
